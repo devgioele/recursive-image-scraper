@@ -1,5 +1,7 @@
 # Recursive image scraper
 
+A web scraper that downloads images recursively
+
 ## Usage
 
 ```sh
