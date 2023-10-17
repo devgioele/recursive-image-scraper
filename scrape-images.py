@@ -10,13 +10,30 @@ import sys
 
 out_dir = sys.argv[2]
 
-def uniquify(path):
+def uniquify_path(path):
     filename, extension = os.path.splitext(path)
     counter = 1
     while os.path.exists(path):
         path = filename + " (" + str(counter) + ")" + extension
         counter += 1
     return path
+
+def make_url_absolute(page_url, relative_url):
+  # If url is absolute
+  if 'http' in relative_url:
+    return relative_url
+  # Take page url without ending file, if any
+  # The first two slashes are due to '://'
+  # A file contains a dot in the name
+  page_url_segments = page_url.split('/')
+  if len(page_url_segments) > 3 and '.' in page_url_segments[-1]:
+    root_page_url = '/'.join(page_url_segments[:-1])
+  else:
+    root_page_url = page_url
+  # Join and leading slash to relative url if missing
+  if root_page_url.endswith('/') and relative_url.startswith('/'):
+    relative_url = relative_url[1:]
+  return '{}{}{}'.format(root_page_url, '' if root_page_url.endswith('/') or relative_url.startswith('/')else '/', relative_url)
 
 visited_pages = []
 downloaded_urls = []
@@ -51,11 +68,9 @@ def scrape_images_rec(root_site, page=None):
 
     path = os.path.join(out_dir, filename.group(1))
     if os.path.exists(path):
-      path = uniquify(path)
+      path = uniquify_path(path)
 
-    # If url is relative
-    if 'http' not in source:
-        source = '{}{}{}'.format(page, '' if source.startswith('/') else '/', source)
+    source = make_url_absolute(page, source)
     if source in downloaded_urls:
       print('Skipping already downloaded:', source)
     else:
