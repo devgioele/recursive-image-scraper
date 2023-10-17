@@ -61,7 +61,11 @@ def scrape_images_rec(root_site, page=None):
     else:
       downloaded_urls.append(source)
       print('Downloading:', source)
-      response = requests.get(source)
+      try:
+        response = requests.get(source)
+      except requests.exceptions.ConnectionError as e:
+        print('Could not download source', source)
+        continue
       with open(path, 'wb') as f:
         f.write(response.content)
 
