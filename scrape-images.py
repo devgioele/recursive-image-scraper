@@ -55,7 +55,7 @@ def scrape_images_rec(root_site, page=None):
 
     # If url is relative
     if 'http' not in source:
-        source = '{}{}'.format(page, source)
+        source = '{}{}{}'.format(page, '' if source.startswith('/') else '/', source)
     if source in downloaded_urls:
       print('Skipping already downloaded:', source)
     else:
