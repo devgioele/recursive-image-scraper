@@ -61,6 +61,7 @@ def scrape_images_rec(root_site, page=None):
     else:
       downloaded_urls.append(source)
       print('Downloading:', source)
+      # TODO: Try failed connections more than once
       try:
         response = requests.get(source)
       except requests.exceptions.ConnectionError as e:
